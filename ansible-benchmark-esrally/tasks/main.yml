@@ -1,0 +1,27 @@
+---
+# All Available tests on 28/04/2017, do 'esrally list tracks' for all the available tracks
+# Name        Description                                                                 Default Challenge        All Challenges
+# ----------  --------------------------------------------------------------------------  -----------------------  -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+# pmc         Full text benchmark containing 574.199 papers from PMC                      append-no-conflicts      append-no-conflicts,append-no-conflicts-index-only,append-no-conflicts-index-only-1-replica,append-fast-no-conflicts,append-fast-sorted-no-conflicts,append-fast-with-conflicts        GB 21,66
+# nested      Nested query benchmark using up to 11,203,029 questions from StackOverflow  nested-search-challenge  nested-search-challenge,index-only                                                                                                                                                     GB  3,39
+# percolator  Percolator benchmark based on 2M AOL queries                                append-no-conflicts      append-no-conflicts,append-no-conflicts-index-only                                                                                                                                     GB  0,10
+# geonames    Standard benchmark in Rally (8.6M POIs from Geonames)                       append-no-conflicts      append-no-conflicts,append-no-conflicts-index-only,append-no-conflicts-index-only-1-replica,append-fast-no-conflicts,append-fast-sorted-no-conflicts,append-fast-with-conflicts        GB  2,60
+# geopoint    60.8M POIs from PlanetOSM                                                   append-no-conflicts      append-no-conflicts,append-no-conflicts-index-only,append-no-conflicts-index-only-1-replica,append-fast-no-conflicts,append-fast-with-conflicts                                        GB  2.28
+# logging     Logging benchmark                                                           append-no-conflicts      append-no-conflicts,append-no-conflicts-index-only,append-no-conflicts-index-only-1-replica,append-fast-no-conflicts,append-fast-sorted-no-conflicts                                   GB 22,87
+# nyc_taxis   Trip records completed in yellow and green taxis in New York in 2015        append-no-conflicts      append-no-conflicts,append-no-conflicts-index-only,append-sorted-no-conflicts-index-only,append-no-conflicts-index-only-1-replica                                                      GB 74,32
+- name: Install esrally and configure
+  include_role:
+    name: samycoenen.ansible-role-esrally
+  vars:
+    datastore_host: "{{ elasticsearch_endpoint }}"
+    datastore_port: "{{ elasticsearch_port }}"
+
+# cluster-health defined as yellow because single node cluster never becomes green on aws.
+- name: Race
+  shell: "esrally --pipeline benchmark-only --target-host {{ elasticsearch_endpoint }}:{{ elasticsearch_port }} --track={{ track }} --challenge={{ challenge }} --cluster-health={{ cluster_health }} --report-format=csv --report-file=result.csv"
+  async: 16000
+  poll: 60
+
+- name: Proces results
+  include: "json_result.yml"
+...

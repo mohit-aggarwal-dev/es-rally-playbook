@@ -1,0 +1,19 @@
+---
+track: geonames
+challenge: append-no-conflicts
+git_folder: /tmp/esrally
+config.version: 8
+env.name: rally
+root.dir: /home/es/.rally/benchmarks
+java8.home: /usr/lib/jvm/java-8-openjdk-amd64
+local.dataset.cache: ${node:root.dir}/data
+datastore.type: elasticsearch
+datastore.host: localhost
+datastore.port: 9200
+datastore.secure: False
+datastore.user: elastic
+datastore.password: changeme
+default.track.url: https://github.com/elastic/rally-tracks
+preserve_benchmark_candidate: True
+cluster_health: yellow
+...

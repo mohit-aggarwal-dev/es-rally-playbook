@@ -1,0 +1,8 @@
+---
+- name: show read results
+  shell: cat result.csv
+  register: result
+
+- name: Print result in JSON
+  debug: msg="{{ result.stdout_lines | esrally_csv_to_json | from_json }}"
+...
