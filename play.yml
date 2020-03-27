@@ -1,0 +1,14 @@
+- name: Simple Example
+  hosts: localhost
+  roles:
+    - role: elastic.elasticsearch
+  vars:
+    es_version: 7.6.1
+    es_heap_size: 16g
+- hosts: localhost
+  vars:
+    datastore_host: localhost
+    elasticsearch_endpoint: localhost
+    elasticsearch_port: 9200
+  roles:
+     - ansible-benchmark-esrally
